@@ -1,32 +1,56 @@
 <template>
-  <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view/>
+  <div class="main">
+      <!-- 路由视图 -->
+      <keep-alive>
+        <router-view v-if="$route.meta.keep" @getPlayerId="getPlayerId" @getPlayAllID="getPlayAllID" ></router-view>
+      </keep-alive>
+
+      <router-view v-if="!$route.meta.keep" @EnterSearchMusic="EnterSearchMusic" @searchBtn="searchBtn" :searchText="searchText" @getPlayerId="getPlayerId" @getPlayAllID="getPlayAllID" ></router-view>
+
+      <!-- 播放器组件 -->
+      <player-con v-show="playerId" :playerId="playerId" :playAllID="playAllID" @getPlayerId="getPlayerId"></player-con>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+<script>
+import playerCon from "./components/base/playerCon.vue"
+export default {
+    data(){
+        return {
+            playerId:null,
+            playAllID:null,
+            MusicListTitle:null,//推荐歌单对应的id
+            searchText:null,//搜索框的内容
+        }
+    },
+    methods:{
+        // 获取歌曲的id
+        getPlayerId(id){
+            this.playerId = id
+        },
+        getPlayAllID(id){
+            this.playAllID = id
+        },
+        EnterSearchMusic(value){
+            this.searchText = value
+            console.log(this.searchText);
+        },
+        searchBtn(btnValue){
+            this.searchText = btnValue
+        }
+    },
+    components:{
+        playerCon
     }
-  }
 }
+</script>
+
+<style lang="scss">
+.main {
+    position: relative;
+}
+// 公共css
+@import "./assets/css/base.css";
+// 重置样式表
+@import "./assets/css/reset.css"
 </style>
